@@ -24,6 +24,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     public static let instance = SwiftReceiveSharingIntentPlugin()
     
     public static func register(with registrar: FlutterPluginRegistrar) {
+        print("DAVID register function")
         let channel = FlutterMethodChannel(name: kMessagesChannel, binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: channel)
         
@@ -37,7 +38,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
+        print("DAVID handle method")
         switch call.method {
         case "getInitialMedia":
             result(toJson(data: self.initialMedia));
@@ -174,6 +175,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        print("DAVID onListen function")
         if (arguments as! String? == "media") {
             eventSinkMedia = events;
         } else if (arguments as! String? == "text") {
@@ -185,6 +187,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     }
     
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        print("DAVID onCancel function")
         if (arguments as! String? == "media") {
             eventSinkMedia = nil;
         } else if (arguments as! String? == "text") {
