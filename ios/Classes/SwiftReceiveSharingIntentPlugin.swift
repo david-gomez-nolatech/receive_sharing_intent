@@ -53,15 +53,6 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
             result(FlutterMethodNotImplemented);
         }
     }
-
-    // By Adding bundle id to prefix, we'll ensure that the correct application will be openned
-    // - found the issue while developing multiple applications using this library, after "application(_:open:options:)" is called, the first app using this librabry (first app by bundle id alphabetically) is opened
-    public func hasMatchingSchemePrefix(url: URL?) -> Bool {
-        if let url = url, let appDomain = Bundle.main.bundleIdentifier {
-            return url.absoluteString.hasPrefix("\(self.customSchemePrefix)-\(appDomain)")
-        }
-        return false
-    }
     
     // This is the function called on app startup with a shared link if the app had been closed already.
     // It is called as the launch process is finishing and the app is almost ready to run.
@@ -71,19 +62,13 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     // Reference: https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622921-application
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
-            if (hasMatchingSchemePrefix(url: url)) {
-                return handleUrl(url: url, setInitialData: true)
-            }
-            return true
+            return handleUrl(url: url, setInitialData: true)
         } else if let activityDictionary = launchOptions[UIApplication.LaunchOptionsKey.userActivityDictionary] as? [AnyHashable: Any] {
             // Handle multiple URLs shared in
             for key in activityDictionary.keys {
                 if let userActivity = activityDictionary[key] as? NSUserActivity {
                     if let url = userActivity.webpageURL {
-                        if (hasMatchingSchemePrefix(url: url)) {
-                            return handleUrl(url: url, setInitialData: true)
-                        }
-                        return true
+                        return handleUrl(url: url, setInitialData: true)
                     }
                 }
             }
@@ -97,10 +82,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     // If the URL does not include the module's prefix, then we return false to indicate our module's attempt to open the resource failed and others should be allowed to.
     // Reference: https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application
     public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        if (hasMatchingSchemePrefix(url: url)) {
-            return handleUrl(url: url, setInitialData: false)
-        }
-        return false
+        return handleUrl(url: url, setInitialData: false)
     }
     
     // This function is called by other modules like Firebase DeepLinks.
@@ -111,9 +93,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     // Reference: https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623072-application
     public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]) -> Void) -> Bool {
         if let url = userActivity.webpageURL {
-            if (hasMatchingSchemePrefix(url: url)) {
-                return handleUrl(url: url, setInitialData: true)
-            }
+            return handleUrl(url: url, setInitialData: true)
         }
         return false
     }
