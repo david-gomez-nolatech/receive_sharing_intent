@@ -61,6 +61,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     // them from getting the chance to.
     // Reference: https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1622921-application
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+        print("DAVID application number 3")
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
             return handleUrl(url: url, setInitialData: true)
         } else if let activityDictionary = launchOptions[UIApplication.LaunchOptionsKey.userActivityDictionary] as? [AnyHashable: Any] {
@@ -82,6 +83,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     // If the URL does not include the module's prefix, then we return false to indicate our module's attempt to open the resource failed and others should be allowed to.
     // Reference: https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application
     public func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        print("DAVID application number 2")
         return handleUrl(url: url, setInitialData: false)
     }
     
@@ -92,6 +94,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     // If the URL does not include the module's prefix, then we must return false to indicate that this module did not handle the prefix and that other modules should try to.
     // Reference: https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623072-application
     public func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]) -> Void) -> Bool {
+        print("DAVID application number 1")
         if let url = userActivity.webpageURL {
             return handleUrl(url: url, setInitialData: true)
         }
@@ -99,11 +102,13 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     }
     
     private func handleUrl(url: URL?, setInitialData: Bool) -> Bool {
+        print("DAVID handleUrl")
         if let url = url {
             let appDomain = Bundle.main.bundleIdentifier!
             let appGroupId = (Bundle.main.object(forInfoDictionaryKey: "AppGroupId") as? String) ?? "group.\(Bundle.main.bundleIdentifier!)"
             let userDefaults = UserDefaults(suiteName: appGroupId)
             if url.fragment == "media" {
+                print("DAVID url.fragment media")
                 if let key = url.host?.components(separatedBy: "=").last,
                     let json = userDefaults?.object(forKey: key) as? Data {
                     let sharedArray = decode(data: json)
@@ -127,6 +132,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
                     eventSinkMedia?(toJson(data: latestMedia))
                 }
             } else if url.fragment == "file" {
+                print("DAVID url.fragment file")
                 if let key = url.host?.components(separatedBy: "=").last,
                     let json = userDefaults?.object(forKey: key) as? Data {
                     let sharedArray = decode(data: json)
@@ -143,6 +149,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
                     eventSinkMedia?(toJson(data: latestMedia))
                 }
             } else if url.fragment == "text" {
+                print("DAVID url.fragment text")
                 if let key = url.host?.components(separatedBy: "=").last,
                     let sharedArray = userDefaults?.object(forKey: key) as? [String] {
                     latestText =  sharedArray.joined(separator: ",")
